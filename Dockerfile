@@ -1,6 +1,8 @@
 # --- Stage 1: Build ---
 FROM node:22-alpine AS builder
 
+RUN apk add --no-cache openssl libc6-compat
+
 WORKDIR /usr/src/app
 
 # Copy dependency definitions
@@ -20,6 +22,8 @@ RUN npm run build
 
 # --- Stage 2: Production Runtime ---
 FROM node:22-alpine AS runner
+
+RUN apk add --no-cache openssl libc6-compat
 
 ENV NODE_ENV=production
 WORKDIR /usr/src/app
@@ -42,5 +46,5 @@ RUN mkdir -p /usr/src/app/data/transcripts && chown -R node:node /usr/src/app
 
 USER node
 
-# Run migrations and start the application
-CMD ["node", "dist/app.js"]
+# Run migrations/db push and start the application
+CMD ["sh", "-c", "npx prisma db push && node dist/app.js"]
