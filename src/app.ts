@@ -6,6 +6,7 @@ import { onGuildDelete } from './events/guild-delete.event';
 import env from './config/env';
 import logger from './logger/logger';
 import prisma from './database/prisma';
+import http from 'http';
 
 // Register Event Listeners
 client.once('ready', () => onReady(client));
@@ -19,6 +20,18 @@ async function bootstrap() {
     // Login client
     await client.login(env.DISCORD_TOKEN);
     logger.info('Discord Gateway authentication initialized.');
+
+    // Boot healthcheck server for Railway port binding requirements
+    const port = process.env.PORT || 3000;
+    http
+      .createServer((_req, res) => {
+        res.writeHead(200, { 'Content-Type': 'text/plain' });
+        res.write('VOOK Ticket Bot is online and healthy!');
+        res.end();
+      })
+      .listen(port, () => {
+        logger.info(`Healthcheck HTTP server listening on port ${port}`);
+      });
   } catch (error) {
     console.error('❌ Bootstrap failed with error:', error);
     logger.fatal(error, 'Bootstrap failed due to an unhandled exception');
