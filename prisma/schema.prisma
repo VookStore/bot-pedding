@@ -1,0 +1,140 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum TicketStatus {
+  OPEN
+  CLOSING
+  CLOSED
+  ERROR
+}
+
+model GuildSettings {
+  id                         String   @id @default(uuid())
+  guildId                    String   @unique
+  enabled                    Boolean  @default(true)
+  panelChannelId             String?
+  panelMessageId             String?
+  logChannelId               String?
+  archivedCategoryId         String?
+  ticketLimitPerUser         Int      @default(1)
+  totalOpenLimit             Int      @default(50)
+  notificationCooldownSeconds Int      @default(300)
+  closeMode                  String   @default("delete") // "delete" or "archive"
+  deleteDelaySeconds         Int      @default(10)
+  panelTitle                 String   @default("## 📂 ATENDIMENTO VOOK")
+  panelDescription           String   @default("Bem-vindo à Central de Atendimento VOOK.\n\nSelecione o motivo do seu contato para iniciar um atendimento privado com nossa equipe. Após escolher uma categoria, informe um assunto claro e aguarde o retorno de um responsável.")
+  panelNotice                String   @default("### Antes de abrir um atendimento\n\n* Abra apenas um ticket por solicitação.\n* Escolha a categoria correspondente ao seu assunto.\n* Explique sua necessidade de maneira clara e objetiva.\n* Não mencione a equipe repetidamente; seu atendimento será respondido assim que possível.")
+  logoUrl                    String   @default("https://i.imgur.com/83pZmqv.png") // VOOK Default Logo placeholder
+  panelBannerUrl             String?
+  ticketBannerUrl            String?
+  createdAt                  DateTime @default(now())
+  updatedAt                  DateTime @updatedAt
+
+  @@index([guildId])
+}
+
+model TicketCategory {
+  id                      String               @id @default(uuid())
+  guildId                 String
+  name                    String
+  slug                    String
+  description             String
+  emoji                   String
+  active                  Boolean              @default(true)
+  sortOrder               Int                  @default(0)
+  discordParentCategoryId String?
+  channelNamePattern      String               @default("ticket-{slug}-{code}")
+  openingMessage          String?
+  bannerUrl               String?
+  deletedAt               DateTime?
+  createdAt               DateTime             @default(now())
+  updatedAt               DateTime             @updatedAt
+  roles                   TicketCategoryRole[]
+  tickets                 Ticket[]
+
+  @@unique([guildId, slug])
+  @@index([guildId])
+  @@index([active])
+  @@index([sortOrder])
+}
+
+model TicketCategoryRole {
+  id               String         @id @default(uuid())
+  ticketCategoryId String
+  roleId           String
+  roleNameSnapshot String
+  createdAt        DateTime       @default(now())
+  category         TicketCategory @relation(fields: [ticketCategoryId], references: [id], onDelete: Cascade)
+
+  @@unique([ticketCategoryId, roleId])
+}
+
+model Ticket {
+  id                   String         @id @default(uuid())
+  publicCode           String
+  guildId              String
+  channelId            String         @unique
+  categoryId           String
+  createdByUserId      String
+  subject              String
+  channelName          String
+  status               TicketStatus   @default(OPEN)
+  assignedToUserId     String?
+  claimedAt            DateTime?
+  openedAt             DateTime       @default(now())
+  closedAt             DateTime?
+  closedByUserId       String?
+  closeReason          String?
+  transcriptUrl        String?
+  transcriptStorageKey String?
+  panelMessageId       String?
+  lastNotificationAt   DateTime?
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+  category             TicketCategory @relation(fields: [categoryId], references: [id])
+  members              TicketMember[]
+
+  @@index([guildId, status])
+  @@index([guildId, createdByUserId])
+  @@index([publicCode])
+}
+
+model TicketMember {
+  id            String   @id @default(uuid())
+  ticketId      String
+  userId        String
+  addedByUserId String
+  addedAt       DateTime @default(now())
+  ticket        Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  @@unique([ticketId, userId])
+}
+
+model TicketActionLog {
+  id           String   @id @default(uuid())
+  guildId      String
+  ticketId     String?
+  action       String
+  actorUserId  String?
+  targetUserId String?
+  metadata     Json?
+  createdAt    DateTime @default(now())
+
+  @@index([guildId])
+}
+
+model InteractionRateLimit {
+  id        String   @id @default(uuid())
+  guildId   String
+  userId    String
+  action    String
+  expiresAt DateTime
+
+  @@unique([guildId, userId, action])
+}
