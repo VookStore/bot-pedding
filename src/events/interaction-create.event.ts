@@ -53,6 +53,7 @@ import {
  */
 export async function onInteractionCreate(interaction: Interaction): Promise<void> {
   const correlationId = Math.random().toString(36).substring(2, 9);
+  logger.info({ type: interaction.type, userId: interaction.user.id, correlationId }, 'Interaction Received');
 
   // 1. ROUTE SLASH COMMANDS
   if (interaction.isChatInputCommand()) {
