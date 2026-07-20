@@ -28,8 +28,8 @@ model GuildSettings {
   closeMode                  String   @default("delete") // "delete" or "archive"
   deleteDelaySeconds         Int      @default(10)
   panelTitle                 String   @default("## 📂 ATENDIMENTO VOOK")
-  panelDescription           String   @default("Bem-vindo à Central de Atendimento VOOK.\n\nSelecione o motivo do seu contato para iniciar um atendimento privado com nossa equipe. Após escolher uma categoria, informe um assunto claro e aguarde o retorno de um responsável.")
-  panelNotice                String   @default("### Antes de abrir um atendimento\n\n* Abra apenas um ticket por solicitação.\n* Escolha a categoria correspondente ao seu assunto.\n* Explique sua necessidade de maneira clara e objetiva.\n* Não mencione a equipe repetidamente; seu atendimento será respondido assim que possível.")
+  panelDescription           String   @default("Bem-vindo à Central de Atendimento VOOK.\n\nSelecione o motivo do seu contato para iniciar um atendimento privado com nossa equipe. Após escolher uma categoria, informe um assunto claro e aguarde o retorno de um responsável.") @db.VarChar(1000)
+  panelNotice                String   @default("### Antes de abrir um atendimento\n\n* Abra apenas um ticket por solicitação.\n* Escolha a categoria correspondente ao seu assunto.\n* Explique sua necessidade de maneira clara e objetiva.\n* Não mencione a equipe repetidamente; seu atendimento será respondido assim que possível.") @db.VarChar(2000)
   logoUrl                    String   @default("https://i.imgur.com/83pZmqv.png") // VOOK Default Logo placeholder
   panelBannerUrl             String?
   ticketBannerUrl            String?
