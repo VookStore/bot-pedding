@@ -20,6 +20,7 @@ async function bootstrap() {
     await client.login(env.DISCORD_TOKEN);
     logger.info('Discord Gateway authentication initialized.');
   } catch (error) {
+    console.error('❌ Bootstrap failed with error:', error);
     logger.fatal(error, 'Bootstrap failed due to an unhandled exception');
     await prisma.$disconnect();
     process.exit(1);
@@ -49,10 +50,12 @@ process.on('SIGINT', () => handleShutdown('SIGINT'));
 process.on('SIGTERM', () => handleShutdown('SIGTERM'));
 
 process.on('unhandledRejection', (reason, promise) => {
+  console.error('❌ Unhandled Rejection:', reason);
   logger.error({ reason, promise }, 'Unhandled Promise Rejection caught globally');
 });
 
 process.on('uncaughtException', (error) => {
+  console.error('❌ Uncaught Exception:', error);
   logger.fatal(error, 'Uncaught Exception caught globally. Crashing process.');
   process.exit(1);
 });
