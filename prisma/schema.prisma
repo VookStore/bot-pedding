@@ -1,5 +1,5 @@
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -7,7 +7,12 @@ generator client {
   provider = "prisma-client-js"
 }
 
-
+enum TicketStatus {
+  OPEN
+  CLOSING
+  CLOSED
+  ERROR
+}
 
 model GuildSettings {
   id                         String   @id @default(uuid())
@@ -23,8 +28,8 @@ model GuildSettings {
   closeMode                  String   @default("delete") // "delete" or "archive"
   deleteDelaySeconds         Int      @default(10)
   panelTitle                 String   @default("## 📂 ATENDIMENTO VOOK")
-  panelDescription           String
-  panelNotice                String
+  panelDescription           String   @default("Bem-vindo à Central de Atendimento VOOK.\n\nSelecione o motivo do seu contato para iniciar um atendimento privado com nossa equipe. Após escolher uma categoria, informe um assunto claro e aguarde o retorno de um responsável.")
+  panelNotice                String   @default("### Antes de abrir um atendimento\n\n* Abra apenas um ticket por solicitação.\n* Escolha a categoria correspondente ao seu assunto.\n* Explique sua necessidade de maneira clara e objetiva.\n* Não mencione a equipe repetidamente; seu atendimento será respondido assim que possível.")
   logoUrl                    String   @default("https://i.imgur.com/83pZmqv.png") // VOOK Default Logo placeholder
   panelBannerUrl             String?
   ticketBannerUrl            String?
@@ -79,7 +84,7 @@ model Ticket {
   createdByUserId      String
   subject              String
   channelName          String
-  status               String         @default("OPEN")
+  status               TicketStatus   @default(OPEN)
   assignedToUserId     String?
   claimedAt            DateTime?
   openedAt             DateTime       @default(now())
@@ -118,7 +123,7 @@ model TicketActionLog {
   action       String
   actorUserId  String?
   targetUserId String?
-  metadata     String?
+  metadata     Json?
   createdAt    DateTime @default(now())
 
   @@index([guildId])
