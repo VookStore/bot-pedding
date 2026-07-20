@@ -57,7 +57,7 @@ export async function onInteractionCreate(interaction: Interaction): Promise<voi
   // 1. ROUTE SLASH COMMANDS
   if (interaction.isChatInputCommand()) {
     const { commandName } = interaction;
-    logger.debug({ commandName, userId: interaction.user.id, correlationId }, 'Executing Slash Command');
+    logger.info({ commandName, userId: interaction.user.id, correlationId }, 'Executing Slash Command');
 
     try {
       switch (commandName) {
@@ -103,7 +103,7 @@ export async function onInteractionCreate(interaction: Interaction): Promise<voi
   if (interaction.isButton()) {
     const customId = interaction.customId;
     const parts = customId.split(':');
-    logger.debug({ customId, userId: interaction.user.id, correlationId }, 'Button Click Triggered');
+    logger.info({ customId, userId: interaction.user.id, correlationId }, 'Button Click Triggered');
 
     try {
       if (customId.startsWith('ticket:claim:')) {
@@ -143,7 +143,7 @@ export async function onInteractionCreate(interaction: Interaction): Promise<voi
   ) {
     const customId = interaction.customId;
     const parts = customId.split(':');
-    logger.debug({ customId, userId: interaction.user.id, correlationId }, 'Select Menu Changed');
+    logger.info({ customId, userId: interaction.user.id, correlationId }, 'Select Menu Changed');
 
     try {
       if (customId === 'ticket:create:category') {
@@ -182,7 +182,7 @@ export async function onInteractionCreate(interaction: Interaction): Promise<voi
   if (interaction.isModalSubmit()) {
     const customId = interaction.customId;
     const parts = customId.split(':');
-    logger.debug({ customId, userId: interaction.user.id, correlationId }, 'Modal Submitted');
+    logger.info({ customId, userId: interaction.user.id, correlationId }, 'Modal Submitted');
 
     try {
       if (customId.startsWith('ticket:create:subject:')) {
