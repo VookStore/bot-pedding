@@ -42,7 +42,5 @@ RUN mkdir -p /usr/src/app/data/transcripts && chown -R node:node /usr/src/app
 
 USER node
 
-VOLUME ["/usr/src/app/data"]
-
 # Run migrations and start the application
 CMD ["node", "dist/app.js"]
