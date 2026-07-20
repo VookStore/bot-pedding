@@ -1,3 +1,4 @@
+// Trigger Railway Deploy: MySQL Schema Update
 import { client } from './client';
 import { onReady } from './events/ready.event';
 import { onInteractionCreate } from './events/interaction-create.event';
