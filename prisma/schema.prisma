@@ -1,5 +1,5 @@
 datasource db {
-  provider = "mysql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -7,12 +7,7 @@ generator client {
   provider = "prisma-client-js"
 }
 
-enum TicketStatus {
-  OPEN
-  CLOSING
-  CLOSED
-  ERROR
-}
+
 
 model GuildSettings {
   id                         String   @id @default(uuid())
@@ -28,8 +23,8 @@ model GuildSettings {
   closeMode                  String   @default("delete") // "delete" or "archive"
   deleteDelaySeconds         Int      @default(10)
   panelTitle                 String   @default("## 📂 ATENDIMENTO VOOK")
-  panelDescription           String   @db.VarChar(1000)
-  panelNotice                String   @db.VarChar(2000)
+  panelDescription           String
+  panelNotice                String
   logoUrl                    String   @default("https://i.imgur.com/83pZmqv.png") // VOOK Default Logo placeholder
   panelBannerUrl             String?
   ticketBannerUrl            String?
@@ -84,7 +79,7 @@ model Ticket {
   createdByUserId      String
   subject              String
   channelName          String
-  status               TicketStatus   @default(OPEN)
+  status               String         @default("OPEN")
   assignedToUserId     String?
   claimedAt            DateTime?
   openedAt             DateTime       @default(now())
@@ -123,7 +118,7 @@ model TicketActionLog {
   action       String
   actorUserId  String?
   targetUserId String?
-  metadata     Json?
+  metadata     String?
   createdAt    DateTime @default(now())
 
   @@index([guildId])

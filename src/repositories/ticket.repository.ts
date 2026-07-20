@@ -1,5 +1,12 @@
 import prisma from '../database/prisma';
-import { Ticket, TicketMember, TicketStatus, TicketCategory, Prisma } from '@prisma/client';
+import { Ticket, TicketMember, TicketCategory, Prisma } from '@prisma/client';
+
+export enum TicketStatus {
+  OPEN = 'OPEN',
+  CLOSING = 'CLOSING',
+  CLOSED = 'CLOSED',
+  ERROR = 'ERROR',
+}
 
 export class TicketRepository {
   public static async getById(

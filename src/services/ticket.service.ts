@@ -10,10 +10,10 @@ import {
   SectionBuilder,
   TextDisplayBuilder,
 } from 'discord.js';
-import { TicketStatus, Ticket } from '@prisma/client';
+import { Ticket } from '@prisma/client';
 import SettingsRepository from '../repositories/settings.repository';
 import CategoryRepository from '../repositories/category.repository';
-import TicketRepository from '../repositories/ticket.repository';
+import TicketRepository, { TicketStatus } from '../repositories/ticket.repository';
 import AuditRepository from '../repositories/audit.repository';
 import TicketChannelService from './ticket-channel.service';
 import TicketLockService from './ticket-lock.service';

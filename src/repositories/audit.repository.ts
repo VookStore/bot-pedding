@@ -23,7 +23,7 @@ export class AuditRepository {
           action,
           actorUserId,
           targetUserId,
-          metadata: metadata ? (metadata as any) : undefined,
+          metadata: metadata ? JSON.stringify(metadata) : null,
         },
       });
 
